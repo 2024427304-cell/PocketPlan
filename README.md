@@ -36,6 +36,13 @@ habits through reports and spending summaries.
 
 ---
 
+## Documentation
+
+- README
+- AI_Log.md
+
+---
+
 ## 📂 Database Structure
 
 ### Users
