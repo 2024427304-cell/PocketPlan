@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import {
+  View,
   Text,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
-
 import { auth, db } from "../firebase/firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { TouchableOpacity, View } from "react-native";
 import { signOut } from "firebase/auth";
 import CustomHeader from "../components/CustomHeader";
 import CustomButton from "../components/CustomButton";
@@ -30,34 +31,31 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
-  const handleLogout = () => {
-  Alert.alert(
-    "Log Out",
-    "Are you sure you want to log out?",
-    [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "Log Out",
-        style: "destructive",
-        onPress: async () => {
-          await signOut(auth);
-          navigation.replace("Login");
-        },
-      },
-    ]
+  const handleLogout = async () => {
+  const confirmLogout = window.confirm(
+    "Are you sure you want to log out?"
   );
+
+  if (!confirmLogout) return;
+
+  await signOut(auth);
+  navigation.replace("Login");
 };
 
   const handleDeleteCategory = async (categoryName) => {
+  const confirmDelete = window.confirm(
+    `Are you sure you want to remove "${categoryName}"?`
+  );
+
+  if (!confirmDelete) return;
+
   try {
     const user = auth.currentUser;
 
-    const updatedCategories = userData.selectedCategories.filter(
-      (item) => item !== categoryName
-    );
+    const updatedCategories =
+      userData.selectedCategories.filter(
+        (item) => item !== categoryName
+      );
 
     const updatedBudgets = { ...userData.budgets };
     delete updatedBudgets[categoryName];
@@ -67,7 +65,7 @@ export default function ProfileScreen({ navigation }) {
       budgets: updatedBudgets,
     });
 
-    alert("Category deleted successfully!");
+    alert("Category removed successfully!");
 
     setUserData({
       ...userData,
@@ -113,7 +111,7 @@ export default function ProfileScreen({ navigation }) {
           </Text>
 
           <TouchableOpacity onPress={() => handleDeleteCategory(category)}>
-            <Text style={styles.deleteText}>Delete</Text>
+            <Text style={styles.deleteText}>Remove</Text>          
           </TouchableOpacity>
         </View>
         );
